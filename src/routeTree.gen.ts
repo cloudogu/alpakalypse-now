@@ -8,79 +8,365 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
+import { Route as AlpacasIndexRouteImport } from './routes/alpacas.index'
+import { Route as AlpacasAlpacaIdRouteImport } from './routes/alpacas.$alpacaId'
+import { Route as BookingAlpacaIdRouteImport } from './routes/booking.$alpacaId'
+import { Route as AdminAlpacasIndexRouteImport } from './routes/admin.alpacas.index'
+import { Route as AdminAlpacasNewRouteImport } from './routes/admin.alpacas.new'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as BookingConfirmationIdRouteImport } from './routes/booking.confirmation.$id'
+import { Route as AdminAlpacasIdEditRouteImport } from './routes/admin.alpacas.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBookingsRoute = AdminBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AlpacasIndexRoute = AlpacasIndexRouteImport.update({
+  id: '/alpacas/',
+  path: '/alpacas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlpacasAlpacaIdRoute = AlpacasAlpacaIdRouteImport.update({
+  id: '/alpacas/$alpacaId',
+  path: '/alpacas/$alpacaId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingAlpacaIdRoute = BookingAlpacaIdRouteImport.update({
+  id: '/booking/$alpacaId',
+  path: '/booking/$alpacaId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAlpacasIndexRoute = AdminAlpacasIndexRouteImport.update({
+  id: '/alpacas/',
+  path: '/alpacas/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAlpacasNewRoute = AdminAlpacasNewRouteImport.update({
+  id: '/alpacas/new',
+  path: '/alpacas/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const BookingConfirmationIdRoute = BookingConfirmationIdRouteImport.update({
+  id: '/booking/confirmation/$id',
+  path: '/booking/confirmation/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAlpacasIdEditRoute = AdminAlpacasIdEditRouteImport.update({
+  id: '/alpacas/$id/edit',
+  path: '/alpacas/$id/edit',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
+  '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/alpacas/$alpacaId': typeof AlpacasAlpacaIdRoute
+  '/booking/$alpacaId': typeof BookingAlpacaIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/alpacas/': typeof AlpacasIndexRoute
+  '/admin/alpacas/new': typeof AdminAlpacasNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/booking/confirmation/$id': typeof BookingConfirmationIdRoute
+  '/admin/alpacas/': typeof AdminAlpacasIndexRoute
+  '/admin/alpacas/$id/edit': typeof AdminAlpacasIdEditRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
+  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/alpacas/$alpacaId': typeof AlpacasAlpacaIdRoute
+  '/booking/$alpacaId': typeof BookingAlpacaIdRoute
+  '/admin': typeof AdminIndexRoute
+  '/alpacas': typeof AlpacasIndexRoute
+  '/admin/alpacas/new': typeof AdminAlpacasNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/booking/confirmation/$id': typeof BookingConfirmationIdRoute
+  '/admin/alpacas': typeof AdminAlpacasIndexRoute
+  '/admin/alpacas/$id/edit': typeof AdminAlpacasIdEditRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/alpacas/$alpacaId': typeof AlpacasAlpacaIdRoute
+  '/booking/$alpacaId': typeof BookingAlpacaIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/alpacas/': typeof AlpacasIndexRoute
+  '/admin/alpacas/new': typeof AdminAlpacasNewRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/booking/confirmation/$id': typeof BookingConfirmationIdRoute
+  '/admin/alpacas/': typeof AdminAlpacasIndexRoute
+  '/admin/alpacas/$id/edit': typeof AdminAlpacasIdEditRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/api/auth/$";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/api/auth/$";
-  id: "__root__" | "/" | "/api/auth/$";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/admin/bookings'
+    | '/alpacas/$alpacaId'
+    | '/booking/$alpacaId'
+    | '/admin/'
+    | '/alpacas/'
+    | '/admin/alpacas/new'
+    | '/api/auth/$'
+    | '/booking/confirmation/$id'
+    | '/admin/alpacas/'
+    | '/admin/alpacas/$id/edit'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/admin/bookings'
+    | '/alpacas/$alpacaId'
+    | '/booking/$alpacaId'
+    | '/admin'
+    | '/alpacas'
+    | '/admin/alpacas/new'
+    | '/api/auth/$'
+    | '/booking/confirmation/$id'
+    | '/admin/alpacas'
+    | '/admin/alpacas/$id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/admin/bookings'
+    | '/alpacas/$alpacaId'
+    | '/booking/$alpacaId'
+    | '/admin/'
+    | '/alpacas/'
+    | '/admin/alpacas/new'
+    | '/api/auth/$'
+    | '/booking/confirmation/$id'
+    | '/admin/alpacas/'
+    | '/admin/alpacas/$id/edit'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
+  IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
+  AlpacasAlpacaIdRoute: typeof AlpacasAlpacaIdRoute
+  BookingAlpacaIdRoute: typeof BookingAlpacaIdRoute
+  AlpacasIndexRoute: typeof AlpacasIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  BookingConfirmationIdRoute: typeof BookingConfirmationIdRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/api/auth/$": {
-      id: "/api/auth/$";
-      path: "/api/auth/$";
-      fullPath: "/api/auth/$";
-      preLoaderRoute: typeof ApiAuthSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bookings': {
+      id: '/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AdminBookingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/alpacas/': {
+      id: '/alpacas/'
+      path: '/alpacas'
+      fullPath: '/alpacas/'
+      preLoaderRoute: typeof AlpacasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alpacas/$alpacaId': {
+      id: '/alpacas/$alpacaId'
+      path: '/alpacas/$alpacaId'
+      fullPath: '/alpacas/$alpacaId'
+      preLoaderRoute: typeof AlpacasAlpacaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/$alpacaId': {
+      id: '/booking/$alpacaId'
+      path: '/booking/$alpacaId'
+      fullPath: '/booking/$alpacaId'
+      preLoaderRoute: typeof BookingAlpacaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/alpacas/': {
+      id: '/admin/alpacas/'
+      path: '/alpacas'
+      fullPath: '/admin/alpacas/'
+      preLoaderRoute: typeof AdminAlpacasIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/alpacas/new': {
+      id: '/admin/alpacas/new'
+      path: '/alpacas/new'
+      fullPath: '/admin/alpacas/new'
+      preLoaderRoute: typeof AdminAlpacasNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/confirmation/$id': {
+      id: '/booking/confirmation/$id'
+      path: '/booking/confirmation/$id'
+      fullPath: '/booking/confirmation/$id'
+      preLoaderRoute: typeof BookingConfirmationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/alpacas/$id/edit': {
+      id: '/admin/alpacas/$id/edit'
+      path: '/alpacas/$id/edit'
+      fullPath: '/admin/alpacas/$id/edit'
+      preLoaderRoute: typeof AdminAlpacasIdEditRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminBookingsRoute: typeof AdminBookingsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminAlpacasNewRoute: typeof AdminAlpacasNewRoute
+  AdminAlpacasIndexRoute: typeof AdminAlpacasIndexRoute
+  AdminAlpacasIdEditRoute: typeof AdminAlpacasIdEditRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBookingsRoute: AdminBookingsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminAlpacasNewRoute: AdminAlpacasNewRoute,
+  AdminAlpacasIndexRoute: AdminAlpacasIndexRoute,
+  AdminAlpacasIdEditRoute: AdminAlpacasIdEditRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
+  AlpacasAlpacaIdRoute: AlpacasAlpacaIdRoute,
+  BookingAlpacaIdRoute: BookingAlpacaIdRoute,
+  AlpacasIndexRoute: AlpacasIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-};
+  BookingConfirmationIdRoute: BookingConfirmationIdRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { createStart } from "@tanstack/react-start";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }

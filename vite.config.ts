@@ -7,24 +7,27 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 
-const config = defineConfig({
+const config = defineConfig(({ mode }) => ({
   staged: {
     "*": "vp check --fix",
   },
-  fmt: {},
+  fmt: { ignorePatterns: ["src/routeTree.gen.ts"] },
   lint: {
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     rules: { "vite-plus/prefer-vite-plus-imports": "error" },
     options: { typeAware: true, typeCheck: true },
   },
   resolve: { tsconfigPaths: true },
-  plugins: lazyPlugins(() => [
-    devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ]),
-});
+  plugins:
+    mode === "test"
+      ? []
+      : lazyPlugins(() => [
+          devtools(),
+          nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+          tailwindcss(),
+          tanstackStart(),
+          viteReact(),
+        ]),
+}));
 
 export default config;
