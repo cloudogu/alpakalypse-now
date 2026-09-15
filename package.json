@@ -65,5 +65,10 @@
       "version": "12.4.1",
       "onFail": "download"
     }
+  },
+  "intent": {
+    "skills": [
+      "*"
+    ]
   }
 }
