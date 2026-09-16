@@ -12,6 +12,35 @@ vp dev
 
 Die SQLite-Datei wird über `DATABASE_URL` in `.env.local` konfiguriert. Falls die Variable fehlt, nutzt die App `./alpakalypse.db`.
 
+## Mit Docker starten
+
+Beim Start führt die Anwendung automatisch alle ausstehenden Drizzle-Migrationen aus und legt die Demo-Daten idempotent an. Ein neues SQLite-Volume benötigt daher keinen manuellen `db:setup`-Aufruf.
+
+```bash
+docker build -t alpakalypse-now .
+export BETTER_AUTH_SECRET="$(openssl rand -base64 32)"
+docker run --rm \
+  -p 3000:3000 \
+  -v alpakalypse-data:/data \
+  -e BETTER_AUTH_SECRET \
+  -e BETTER_AUTH_URL=http://localhost:3000 \
+  alpakalypse-now
+```
+
+Für ein Deployment muss `BETTER_AUTH_URL` auf die öffentlich erreichbare HTTPS-Adresse zeigen und `BETTER_AUTH_SECRET` dauerhaft über den Secret-Store der Plattform bereitgestellt werden.
+
+Mit `SKIP_DATABASE_SEED=true` wird das automatische Anlegen der Demo-Daten übersprungen. Die Schema-Migrationen werden unabhängig davon weiterhin ausgeführt:
+
+```bash
+docker run --rm \
+  -p 3000:3000 \
+  -v alpakalypse-data:/data \
+  -e BETTER_AUTH_SECRET \
+  -e BETTER_AUTH_URL=http://localhost:3000 \
+  -e SKIP_DATABASE_SEED=true \
+  alpakalypse-now
+```
+
 ## Demo-Zugänge
 
 - Admin: `admin@alpakalypse.demo` / `Flausch123!`
