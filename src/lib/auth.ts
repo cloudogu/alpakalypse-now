@@ -8,6 +8,12 @@ import * as schema from "#/db/schema";
 export const auth = betterAuth({
   appName: "Alpakalypse Now",
   database: drizzleAdapter(db, { provider: "sqlite", schema }),
+  advanced: {
+    ipAddress: {
+      // IP tracking is disabled to suppress the missing client IP warning; this is acceptable for a demo app.
+      disableIpTracking: true,
+    },
+  },
   emailAndPassword: { enabled: true, minPasswordLength: 8 },
   user: {
     modelName: "users",

@@ -25,10 +25,12 @@ RUN mkdir /data && chown node:node /data
 
 COPY --from=build --chown=node:node /app/.output/ ./
 COPY --from=build --chown=node:node /app/drizzle/ ./drizzle/
+COPY --chown=node:node --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 USER node
 
 EXPOSE 3000
 VOLUME ["/data"]
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["node", "server/index.mjs"]

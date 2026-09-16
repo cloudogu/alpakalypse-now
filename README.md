@@ -18,16 +18,26 @@ Beim Start führt die Anwendung automatisch alle ausstehenden Drizzle-Migratione
 
 ```bash
 docker build -t alpakalypse-now .
-export BETTER_AUTH_SECRET="$(openssl rand -base64 32)"
 docker run --rm \
   -p 3000:3000 \
   -v alpakalypse-data:/data \
-  -e BETTER_AUTH_SECRET \
-  -e BETTER_AUTH_URL=http://localhost:3000 \
   alpakalypse-now
 ```
 
-Für ein Deployment muss `BETTER_AUTH_URL` auf die öffentlich erreichbare HTTPS-Adresse zeigen und `BETTER_AUTH_SECRET` dauerhaft über den Secret-Store der Plattform bereitgestellt werden.
+Im Container verwendet `BETTER_AUTH_URL` standardmäßig `http://localhost:3000`. Falls `BETTER_AUTH_SECRET` fehlt, erzeugt der Entrypoint beim ersten Start ein kryptografisch zufälliges Secret und speichert es mit Dateirechten `0600` unter `/data/better-auth-secret`. Das Docker-Volume sorgt dafür, dass dasselbe Secret nach einem Neustart weiterverwendet wird und bestehende Sessions gültig bleiben.
+
+Für ein Deployment muss `BETTER_AUTH_URL` auf die öffentlich erreichbare HTTPS-Adresse gesetzt werden. Ein explizites `BETTER_AUTH_SECRET` hat Vorrang vor der Datei im Volume und sollte in Produktion dauerhaft über den Secret-Store der Plattform bereitgestellt werden:
+
+```bash
+docker run --rm \
+  -p 3000:3000 \
+  -v alpakalypse-data:/data \
+  -e BETTER_AUTH_URL=https://alpaka.example.com \
+  -e BETTER_AUTH_SECRET \
+  alpakalypse-now
+```
+
+Das automatisch erzeugte Secret wird nicht ausgegeben. Wird das Volume gelöscht, wird beim nächsten Start ein neues Secret erzeugt und bestehende Sessions werden ungültig.
 
 Mit `SKIP_DATABASE_SEED=true` wird das automatische Anlegen der Demo-Daten übersprungen. Die Schema-Migrationen werden unabhängig davon weiterhin ausgeführt:
 
@@ -35,8 +45,6 @@ Mit `SKIP_DATABASE_SEED=true` wird das automatische Anlegen der Demo-Daten über
 docker run --rm \
   -p 3000:3000 \
   -v alpakalypse-data:/data \
-  -e BETTER_AUTH_SECRET \
-  -e BETTER_AUTH_URL=http://localhost:3000 \
   -e SKIP_DATABASE_SEED=true \
   alpakalypse-now
 ```
