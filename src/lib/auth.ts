@@ -18,7 +18,11 @@ export const auth = betterAuth({
   session: { modelName: "sessions" },
   account: { modelName: "accounts" },
   verification: { modelName: "verifications" },
-  rateLimit: { enabled: true, window: 60, max: 20 },
+  rateLimit: {
+    enabled: process.env.BETTER_AUTH_RATE_LIMIT_DISABLED !== "true",
+    window: 60,
+    max: 20,
+  },
   trustedOrigins: ["http://localhost:3000", "http://localhost:3001"],
   plugins: [tanstackStartCookies()],
 });

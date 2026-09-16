@@ -14,3 +14,7 @@ todos.json
 *.db
 *.db-shm
 *.db-wal
+coverage
+playwright-report
+test-results
+.test-data

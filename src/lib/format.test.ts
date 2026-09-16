@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vite-plus/test";
-import { formatMoney, rentalDays, todayIso } from "./format";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { formatDate, formatMoney, rentalDays, todayIso } from "./format";
+
+afterEach(() => vi.useRealTimers());
 
 describe("booking calculations", () => {
   it("counts rental days independently of daylight-saving changes", () => {
@@ -14,7 +16,14 @@ describe("booking calculations", () => {
     expect(formatMoney(8_900)).toContain("89,00");
   });
 
+  it("formats an ISO date for the German locale", () => {
+    expect(formatDate("2026-09-16")).toBe("16.09.2026");
+  });
+
   it("returns today's ISO calendar date", () => {
-    expect(todayIso()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-16T23:30:00Z"));
+
+    expect(todayIso()).toBe("2026-09-16");
   });
 });

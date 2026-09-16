@@ -2,12 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { authClient } from "#/lib/auth-client";
 import { getCurrentUser } from "#/lib/data.functions";
-
-function safeRedirect(value: unknown) {
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/profile";
-}
+import { safeRedirect } from "#/lib/navigation";
 function field(form: FormData, name: string) {
   const value = form.get(name);
   return typeof value === "string" ? value : "";

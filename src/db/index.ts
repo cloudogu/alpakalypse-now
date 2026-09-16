@@ -1,8 +1,9 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
 import { config } from "dotenv";
 
-import * as schema from "./schema.ts";
+import { createDatabase } from "./create.ts";
+
+export { createDatabase, type AppDatabase } from "./create.ts";
 
 config({ path: [".env.local", ".env"], quiet: true });
 
-export const db = drizzle(process.env.DATABASE_URL ?? "./alpakalypse.db", { schema });
+export const db = createDatabase(process.env.DATABASE_URL ?? "./alpakalypse.db");

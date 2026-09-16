@@ -1,4 +1,6 @@
 [tools]
 node = "24"
 pnpm = "12"
-viteplus = "latest"
+
+[env]
+_.path = ["{{config_root}}/node_modules/.bin"]

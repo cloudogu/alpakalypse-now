@@ -17,6 +17,12 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts",
     "db:setup": "vp run db:push && vp run db:seed",
+    "test:unit": "vp test run --project unit",
+    "test:integration": "vp test run --project integration",
+    "test:coverage": "vp test run --coverage",
+    "test:e2e:install": "playwright install chromium",
+    "test:e2e": "playwright test",
+    "test:all": "vp test run && playwright test",
     "prepare": "vp config"
   },
   "dependencies": {
@@ -32,9 +38,11 @@
     "nitro": "3.0.260610-beta",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "vite-plus": "^0.3.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/router-cli": "^1.132.0",
     "@types/better-sqlite3": "^7.6.0",
@@ -42,11 +50,11 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.3.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.3.2",
-    "vite-plus": "0.3.2",
     "vitest": "4.1.11"
   },
   "overrides": {
@@ -55,7 +63,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.4.1",
+      "version": "12.4.2",
       "onFail": "download"
     }
   },
