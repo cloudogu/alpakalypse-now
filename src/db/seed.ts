@@ -4,6 +4,23 @@ import { eq } from "drizzle-orm";
 import type { AppDatabase } from "./create.ts";
 import { accounts, alpacas, bookings, users } from "./schema.ts";
 
+export const DEMO_PASSWORD = "Flausch123!";
+
+export const DEMO_USERS = [
+  {
+    id: "admin-demo",
+    name: "Ada Admin",
+    email: "admin@alpakalypse.demo",
+    role: "admin" as const,
+  },
+  {
+    id: "customer-demo",
+    name: "Karla Kunde",
+    email: "kunde@alpakalypse.demo",
+    role: "customer" as const,
+  },
+] as const;
+
 const herd = [
   [
     "kevin",
@@ -104,21 +121,8 @@ export async function seedDatabase(database: AppDatabase, now = new Date()) {
       .where(eq(alpacas.id, id));
   }
 
-  const password = await hashPassword("Flausch123!");
-  for (const person of [
-    {
-      id: "admin-demo",
-      name: "Ada Admin",
-      email: "admin@alpakalypse.demo",
-      role: "admin" as const,
-    },
-    {
-      id: "customer-demo",
-      name: "Karla Kunde",
-      email: "kunde@alpakalypse.demo",
-      role: "customer" as const,
-    },
-  ]) {
+  const password = await hashPassword(DEMO_PASSWORD);
+  for (const person of DEMO_USERS) {
     await database
       .insert(users)
       .values({ ...person, emailVerified: true, createdAt: now, updatedAt: now })

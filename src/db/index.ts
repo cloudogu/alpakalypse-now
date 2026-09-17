@@ -11,6 +11,10 @@ export { seedDatabase } from "./seed.ts";
 config({ path: [".env.local", ".env"], quiet: true });
 
 export const db = createDatabase(process.env.DATABASE_URL ?? "./alpakalypse.db");
+const skipSeed = shouldSkipDatabaseSeed(process.env.SKIP_DATABASE_SEED);
+
 await prepareDatabase(db, {
-  skipSeed: shouldSkipDatabaseSeed(process.env.SKIP_DATABASE_SEED),
+  skipSeed,
 });
+
+export const demoDataLoaded = !skipSeed;

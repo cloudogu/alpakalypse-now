@@ -47,7 +47,10 @@ const config = defineConfig(({ mode }) => ({
       ? []
       : lazyPlugins(() => [
           devtools(),
-          nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+          nitro({
+            plugins: ["./src/nitro/startup.ts"],
+            rollupConfig: { external: [/^@sentry\//] },
+          }),
           tanstackStart(),
           viteReact(),
         ]),

@@ -1,8 +1,9 @@
 import { db } from "../src/db/index.ts";
-import { seedDatabase } from "../src/db/seed.ts";
+import { DEMO_PASSWORD, DEMO_USERS, seedDatabase } from "../src/db/seed.ts";
 
 await seedDatabase(db);
 
 console.log("Demo-Daten angelegt.");
-console.log("Admin: admin@alpakalypse.demo / Flausch123!");
-console.log("Kunde: kunde@alpakalypse.demo / Flausch123!");
+for (const user of DEMO_USERS) {
+  console.log(`${user.name}: ${user.email} / ${DEMO_PASSWORD}`);
+}
