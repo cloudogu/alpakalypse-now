@@ -1,38 +1,53 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-COMMAND=$1
+COMMAND=${1:-}
 
-if [ -z "$COMMAND" ]; then
-  echo "No command specified"
-  exit 1
-fi
-
-if [ "$COMMAND" != "build" ] && [ "$COMMAND" != "push" ]; then
-  echo "Unsupported command: $COMMAND"
-  exit 1
-fi
+case "$COMMAND" in
+  build | push) ;;
+  "")
+    echo "No command specified" >&2
+    exit 1
+    ;;
+  *)
+    echo "Unsupported command: $COMMAND" >&2
+    exit 1
+    ;;
+esac
 
 COMMIT=$(git rev-parse --short HEAD)
 DATE=$(date +%Y%m%d%H%M%S)
-IMAGE=europe-docker.pkg.dev/cloudogu-backend/team-rapid-public/alpakalypse-now:$DATE-$COMMIT
+PLATFORMS=linux/amd64,linux/arm64
+MULTIARCH_BUILDER=${MULTIARCH_BUILDER:-alpakalypse-now}
+IMAGE_REPOSITORY=${IMAGE_REPOSITORY:-europe-docker.pkg.dev/cloudogu-backend/team-rapid-public/alpakalypse-now}
+IMAGE_TAG=${IMAGE_TAG:-$DATE-$COMMIT}
+IMAGE=$IMAGE_REPOSITORY:$IMAGE_TAG
+IMAGE_LOCAL=alpakalypse-now
 
-docker build -t $IMAGE .
+if ! docker buildx inspect "$MULTIARCH_BUILDER" >/dev/null 2>&1; then
+  docker buildx create \
+    --name "$MULTIARCH_BUILDER" \
+    --driver docker-container >/dev/null
+fi
 
-  if [ $? -eq 0 ]; then
-    echo "Docker build succeeded: $IMAGE"
-  else
-    echo "Docker build failed"
-    exit 1
-  fi
-  
+docker buildx inspect "$MULTIARCH_BUILDER" --bootstrap >/dev/null
+
 if [ "$COMMAND" = "push" ]; then
-  docker push $IMAGE
+  docker buildx build \
+    --builder "$MULTIARCH_BUILDER" \
+    --platform "$PLATFORMS" \
+    --tag "$IMAGE" \
+    --push \
+    .
 
-  if [ $? -eq 0 ]; then
-    echo "Docker push succeeded: $IMAGE"
-  else
-    echo "Docker push failed"
-    exit 1
-  fi
+  echo "Multi-arch Docker image pushed: $IMAGE ($PLATFORMS)"
+else
+  docker buildx build \
+    --builder "$MULTIARCH_BUILDER" \
+    --tag "$IMAGE" \
+    --tag "$IMAGE_LOCAL" \
+    --load \
+    .
+
+  echo "Local Docker image built and loaded: $IMAGE_LOCAL (host architecture)"
 fi

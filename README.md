@@ -1,8 +1,10 @@
 # Alpakalypse Now
 
-Demo-Anwendung für einen fiktiven Alpaka-Verleih, umgesetzt mit TanStack Start, Better Auth, Drizzle ORM und SQLite.
+Alpakalypse Now ist eine Demo für einen fiktiven Alpaka-Verleih. Die Anwendung nutzt TanStack Start, Better Auth, Drizzle ORM und SQLite.
 
 ## Lokal starten
+
+Installiere die Abhängigkeiten, richte die Datenbank ein und starte den Entwicklungsserver:
 
 ```bash
 vp install
@@ -10,23 +12,32 @@ vp run db:setup
 vp dev
 ```
 
-Die SQLite-Datei wird über `DATABASE_URL` in `.env.local` konfiguriert. Falls die Variable fehlt, nutzt die App `./alpakalypse.db`.
+Setze `DATABASE_URL` in `.env.local`, um eine andere SQLite-Datei zu verwenden. Ohne diese Variable nutzt die Anwendung `./alpakalypse.db`.
 
 ## Mit Docker starten
 
-Beim Start führt die Anwendung automatisch alle ausstehenden Drizzle-Migrationen aus und legt die Demo-Daten idempotent an. Ein neues SQLite-Volume benötigt daher keinen manuellen `db:setup`-Aufruf.
+Baue zuerst das Image für die Architektur deines Rechners:
 
 ```bash
-docker build -t alpakalypse-now .
+vp run docker:build
+```
+
+Der Befehl lädt das Image unter dem Namen `alpakalypse-now` in den lokalen Image-Store. Starte es mit einem persistenten Volume:
+
+```bash
 docker run --rm \
   -p 3000:3000 \
   -v alpakalypse-data:/data \
   alpakalypse-now
 ```
 
-Im Container verwendet `BETTER_AUTH_URL` standardmäßig `http://localhost:3000`. Falls `BETTER_AUTH_SECRET` fehlt, erzeugt der Entrypoint beim ersten Start ein kryptografisch zufälliges Secret und speichert es mit Dateirechten `0600` unter `/data/better-auth-secret`. Das Docker-Volume sorgt dafür, dass dasselbe Secret nach einem Neustart weiterverwendet wird und bestehende Sessions gültig bleiben.
+### Authentifizierung konfigurieren
 
-Für ein Deployment muss `BETTER_AUTH_URL` auf die öffentlich erreichbare HTTPS-Adresse gesetzt werden. Ein explizites `BETTER_AUTH_SECRET` hat Vorrang vor der Datei im Volume und sollte in Produktion dauerhaft über den Secret-Store der Plattform bereitgestellt werden:
+Im Container hat `BETTER_AUTH_URL` den Standardwert `http://localhost:3000`. Für ein Deployment muss die Variable auf die öffentliche HTTPS-Adresse zeigen.
+
+Fehlt `BETTER_AUTH_SECRET`, erzeugt der Entrypoint beim ersten Start ein zufälliges Secret. Er speichert es mit den Dateirechten `0600` unter `/data/better-auth-secret`. Das Volume bewahrt das Secret bei Neustarts und hält bestehende Sessions gültig. Wenn du das Volume löschst, erzeugt der nächste Start ein neues Secret und beendet damit alle bestehenden Sessions.
+
+Setze in Produktion ein dauerhaftes Secret aus dem Secret-Store der Plattform:
 
 ```bash
 docker run --rm \
@@ -37,9 +48,11 @@ docker run --rm \
   alpakalypse-now
 ```
 
-Das automatisch erzeugte Secret wird nicht ausgegeben. Wird das Volume gelöscht, wird beim nächsten Start ein neues Secret erzeugt und bestehende Sessions werden ungültig.
+Ein gesetztes `BETTER_AUTH_SECRET` hat Vorrang vor der Datei im Volume. Der Entrypoint gibt automatisch erzeugte Secrets nicht aus.
 
-Mit `SKIP_DATABASE_SEED=true` wird das automatische Anlegen der Demo-Daten übersprungen. Die Schema-Migrationen werden unabhängig davon weiterhin ausgeführt:
+### Demo-Daten abschalten
+
+Setze `SKIP_DATABASE_SEED=true`, um keine Demo-Daten anzulegen. Die Migrationen laufen weiterhin:
 
 ```bash
 docker run --rm \
@@ -49,29 +62,54 @@ docker run --rm \
   alpakalypse-now
 ```
 
-## Demo-Zugänge
+### Multi-Arch-Image veröffentlichen
 
-- Admin: `admin@alpakalypse.demo` / `Flausch123!`
-- Kunde: `kunde@alpakalypse.demo` / `Flausch123!`
-
-Bitte ausschließlich Demo-Daten verwenden. Die Anwendung verarbeitet keine Zahlungen und versendet keine E-Mails.
-
-## Nützliche Befehle
+Der Push baut Images für `linux/amd64` und `linux/arm64`. Anschließend veröffentlicht er beide Architekturen unter demselben Registry-Tag:
 
 ```bash
-vp run db:generate  # Migration aus dem Schema generieren
-vp run db:migrate   # Migrationen anwenden
-vp run db:seed      # Demo-Daten einspielen
-vp check            # Format, Lint und Typprüfung
-vp run test:unit          # Schnelle Unit-Tests
-vp run test:integration   # Integrationstests mit In-Memory-SQLite
-vp run test:coverage      # Coverage-Bericht ohne Schwellwert
-vp run test:e2e:install   # Chromium einmalig installieren
-vp run test:e2e           # Kritische Browser-Flows
-vp run test:all           # Unit-, Integrations- und E2E-Tests
-vp build            # Produktions-Build
+vp run docker:push
 ```
 
-Die E2E-Suite verwendet ausschließlich `.test-data/e2e.db`, setzt sie vor jedem Test zurück und verändert die lokale Entwicklungsdatenbank nicht. Fehlerartefakte liegen unter `playwright-report` und `test-results`.
+Mit `IMAGE_REPOSITORY`, `IMAGE_TAG` und `MULTIARCH_BUILDER` kannst du Repository, Tag und Buildx-Builder ändern.
 
-Eine CI-Pipeline sollte provider-neutral folgende Schritte ausführen: `vp install --frozen-lockfile`, `vp run test:e2e:install`, `vp check`, `vp run test:coverage`, `vp build` und `vp run test:e2e`. Coverage-, Playwright- und Test-Result-Verzeichnisse sollten als Artefakte veröffentlicht werden.
+## Demo-Zugänge
+
+| Rolle | E-Mail                   | Passwort      |
+| ----- | ------------------------ | ------------- |
+| Admin | `admin@alpakalypse.demo` | `Flausch123!` |
+| Kunde | `kunde@alpakalypse.demo` | `Flausch123!` |
+
+Verwende nur Demo-Daten. Die Anwendung verarbeitet keine Zahlungen und versendet keine E-Mails.
+
+## Entwicklung und Tests
+
+| Befehl                    | Zweck                                                   |
+| ------------------------- | ------------------------------------------------------- |
+| `vp run db:generate`      | Erzeugt eine Migration aus dem Drizzle-Schema.          |
+| `vp run db:migrate`       | Wendet ausstehende Migrationen an.                      |
+| `vp run db:seed`          | Legt die Demo-Daten an.                                 |
+| `vp check`                | Formatiert den Code und prüft Lint sowie Typen.         |
+| `vp run test:unit`        | Führt die Unit-Tests aus.                               |
+| `vp run test:integration` | Führt die Integrationstests mit SQLite im Speicher aus. |
+| `vp run test:coverage`    | Erstellt einen Coverage-Bericht ohne Mindestwert.       |
+| `vp run test:e2e:install` | Installiert Chromium für die Browser-Tests.             |
+| `vp run test:e2e`         | Führt die Browser-Tests aus.                            |
+| `vp run test:all`         | Führt Unit-, Integrations- und Browser-Tests aus.       |
+| `vp build`                | Erstellt den Produktions-Build.                         |
+
+Die Browser-Tests verwenden nur `.test-data/e2e.db`. Die Tests setzen diese Datenbank vor jedem Lauf zurück und ändern die lokale Entwicklungsdatenbank nicht. Bei Fehlern schreibt Playwright Berichte nach `playwright-report` und weitere Dateien nach `test-results`.
+
+## CI
+
+Eine CI-Pipeline sollte diese Befehle ausführen:
+
+```bash
+vp install --frozen-lockfile
+vp run test:e2e:install
+vp check
+vp run test:coverage
+vp build
+vp run test:e2e
+```
+
+Veröffentliche die Coverage-Berichte sowie `playwright-report` und `test-results` als Build-Artefakte.
