@@ -23,7 +23,9 @@
     "test:e2e:install": "playwright install chromium",
     "test:e2e": "playwright test",
     "test:all": "vp test run && playwright test",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "docker:build": "bash scripts/docker.sh build",
+    "docker:push": "bash scripts/docker.sh push"
   },
   "dependencies": {
     "@tanstack/react-devtools": "latest",
